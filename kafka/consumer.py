@@ -8,6 +8,7 @@ sys.path.append(work_dir)
 from kafka_connection import kafka_consumer
 import joblib
 import pandas as pd
+import json
 
 from src.models.model import HappinessPredictions
 from src.database.dbconnection import getconnection
@@ -28,18 +29,20 @@ if __name__ == '__main__':
     except SQLAlchemyError as e:
         print(f"Error creating table: {e}")
 
-    model = joblib.load("../model_training/XGB_model.pkl")
+    model = joblib.load("./model_training/XGB_model.pkl")
 
     consumer = kafka_consumer()
 
     for m in consumer:
-        m = pd.json_normalize(m)
-        prediction = model.predict(m)
-        m['Predited_Score'] = prediction
+        print(f"Mensaje recibido: {m.value}")
+        m_value = json.loads(m.value)
+        m_normalize = pd.json_normalize(m_value)
+        prediction = model.predict(m_normalize)
+        m_normalize['Predited_Score'] = prediction
 
 
         try:
-            m.to_sql("HappinessPredictions", con=engine, if_exists='append', index=False)
+            m_normalize.to_sql("HappinessPredictions", con=engine, if_exists='append', index=False)
         except SQLAlchemyError as e:
             print(f"Database error: {e}")
         except Exception as e:

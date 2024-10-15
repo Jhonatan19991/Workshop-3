@@ -22,5 +22,5 @@ def kafka_consumer():
         value_deserializer=lambda m: loads(m.decode('utf-8')),
         bootstrap_servers=['localhost:9092']
         )
-    for m in consumer:
-       print(m.value)
+
+    return consumer

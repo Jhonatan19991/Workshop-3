@@ -1,3 +1,10 @@
+import os
+import sys
+
+work_dir = os.getenv("WORK_DIR")
+
+sys.path.append(work_dir)
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -6,7 +13,7 @@ from sklearn.model_selection import train_test_split
 def prepare_data():
     dfs = {}
     for year in range(2015,2020):
-        df = pd.read_csv(f"../data/{year}.csv")
+        df = pd.read_csv(f"./data/{year}.csv")
         dfs[year] = df
 
 
