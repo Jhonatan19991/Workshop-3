@@ -12,7 +12,8 @@ from transforms.transform import  prepare_data
 from kafka_connection import kafka_producer
 
 if __name__ == "__main__":
-    df = prepare_data()
+    x, y = prepare_data()
+    df = pd.concat([x, y], axis=1)
     producer = kafka_producer()
 
     for index, row in df.iterrows():

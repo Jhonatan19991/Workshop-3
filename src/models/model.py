@@ -20,3 +20,4 @@ class HappinessPredictions(BASE):
     Region_Europe = Column(Integer, nullable=False)
     Region_Oceania = Column(Integer, nullable=False)
     Predited_Score = Column(Float, nullable=False)
+    Score = Column(Float, nullable=False)

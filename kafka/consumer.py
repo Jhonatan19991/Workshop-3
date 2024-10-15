@@ -37,7 +37,10 @@ if __name__ == '__main__':
         print(f"Mensaje recibido: {m.value}")
         m_value = json.loads(m.value)
         m_normalize = pd.json_normalize(m_value)
-        prediction = model.predict(m_normalize)
+
+        m_predict = m_normalize.drop(columns="Score")
+        prediction = model.predict(m_predict)
+
         m_normalize['Predited_Score'] = prediction
 
 
