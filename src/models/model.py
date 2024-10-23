@@ -15,6 +15,7 @@ class HappinessPredictions(BASE):
     Trust = Column(Float, nullable=False)
     Generosity = Column(Float, nullable=False)
     year = Column(Integer, nullable=False)
+    Dystopia = Column(Float, nullable=False)
     Region_America = Column(Integer, nullable=False)
     Region_Asia = Column(Integer, nullable=False)
     Region_Europe = Column(Integer, nullable=False)

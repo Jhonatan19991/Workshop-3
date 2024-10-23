@@ -129,8 +129,8 @@ def prepare_data():
     df = pd.get_dummies(df, columns=['Region'], drop_first=True, dtype=int)
     df.drop(columns="Country", inplace=True)
 
-    complete_data = df.dropna(subset=['Dystopia Residual'])
-    incomplete_data = df[df['Dystopia Residual'].isna()]
+    complete_data = df.dropna(subset=['Dystopia'])
+    incomplete_data = df[df['Dystopia'].isna()]
 
     predictors = [
         'Economy', 
@@ -147,7 +147,7 @@ def prepare_data():
     ]
 
     X_train = complete_data[predictors]
-    y_train = complete_data['Dystopia Residual']
+    y_train = complete_data['Dystopia']
 
     model = LinearRegression()
     model.fit(X_train, y_train)
@@ -155,7 +155,7 @@ def prepare_data():
     X_missing = incomplete_data[predictors]
     predicted_values = model.predict(X_missing)
 
-    df.loc[df['Dystopia Residual'].isna(), 'Dystopia Residual'] = predicted_values
+    df.loc[df['Dystopia'].isna(), 'Dystopia'] = predicted_values
 
 
 
