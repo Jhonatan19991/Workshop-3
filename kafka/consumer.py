@@ -29,7 +29,7 @@ if __name__ == '__main__':
     except SQLAlchemyError as e:
         print(f"Error creating table: {e}")
 
-    model = joblib.load("./model_training/XGB_model.pkl")
+    model = joblib.load("./model_training/polymodel.pkl")
 
     consumer = kafka_consumer()
 

@@ -8,6 +8,8 @@ sys.path.append(work_dir)
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
 
 
 def prepare_data():
@@ -37,11 +39,13 @@ def prepare_data():
     dfs[2019].drop(columns=['Overall rank'], inplace=True)
 
     dfs[2017].rename(columns={
-    'Happiness.Score': 'Happiness Score',
-    'Economy..GDP.per.Capita.': 'Economy (GDP per Capita)',
-    'Health..Life.Expectancy.': 'Health (Life Expectancy)',
-    'Trust..Government.Corruption.': 'Trust (Government Corruption)'
+        'Happiness.Score': 'Happiness Score',
+        'Economy..GDP.per.Capita.': 'Economy (GDP per Capita)',
+        'Health..Life.Expectancy.': 'Health (Life Expectancy)',
+        'Trust..Government.Corruption.': 'Trust (Government Corruption)',
+        'Dystopia.Residual': 'Dystopia Residual'
     }, inplace=True)
+
 
     dfs[2018].rename(columns={
         'Country or region': 'Country',
@@ -63,9 +67,6 @@ def prepare_data():
         'Perceptions of corruption': 'Trust (Government Corruption)'
     }, inplace=True)
 
-    for year in dfs:
-        columns_to_drop = ['Dystopia.Residual', 'Dystopia Residual']
-        dfs[year].drop(columns=columns_to_drop, inplace=True, errors='ignore')
 
     years = [2015, 2016, 2017, 2018, 2019]
 
@@ -117,14 +118,46 @@ def prepare_data():
     df['Trust (Government Corruption)'] = df['Trust (Government Corruption)'].fillna(method='ffill')
 
     df.rename(columns={
-    'Happiness Score': 'Score',
-    'Economy (GDP per Capita)': 'Economy',
-    'Health (Life Expectancy)': 'Health',
-    'Trust (Government Corruption)': 'Trust'
+        'Happiness Score': 'Score',
+        'Economy (GDP per Capita)': 'Economy',
+        'Health (Life Expectancy)': 'Health',
+        'Trust (Government Corruption)': 'Trust',
+        'Dystopia Residual' : 'Dystopia'
     }, inplace=True)
+
 
     df = pd.get_dummies(df, columns=['Region'], drop_first=True, dtype=int)
     df.drop(columns="Country", inplace=True)
+
+    complete_data = df.dropna(subset=['Dystopia Residual'])
+    incomplete_data = df[df['Dystopia Residual'].isna()]
+
+    predictors = [
+        'Economy', 
+        'Family', 
+        'Health', 
+        'Freedom', 
+        'Trust', 
+        'Generosity', 
+        'year', 
+        'Region_America', 
+        'Region_Asia', 
+        'Region_Europe', 
+        'Region_Oceania'
+    ]
+
+    X_train = complete_data[predictors]
+    y_train = complete_data['Dystopia Residual']
+
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    X_missing = incomplete_data[predictors]
+    predicted_values = model.predict(X_missing)
+
+    df.loc[df['Dystopia Residual'].isna(), 'Dystopia Residual'] = predicted_values
+
+
 
 
     X = df.drop(['Score'], axis=1)
