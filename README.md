@@ -78,6 +78,7 @@ A key aspect of the project involved streaming test data using Apache Kafka. Dat
 - VirtualBox
 - Apache-Kafka
 - scikit-learn
+- docker
 
 ## Getting Started
 ### Workflow
