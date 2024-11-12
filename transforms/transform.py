@@ -115,6 +115,8 @@ def prepare_data():
 
     # Normalize the regions using the mapping
     df['Region'] = df['Region'].map(normalization_regions)
+    df = df.dropna(subset=['Trust (Government Corruption)'])
+
 
     df.rename(columns={
         'Happiness Score': 'Score',
@@ -126,6 +128,7 @@ def prepare_data():
 
 
     df = pd.get_dummies(df, columns=['Region'], drop_first=True, dtype=int)
+    print(df.columns)
     df.drop(columns="Country", inplace=True)
 
     complete_data = df.dropna(subset=['Dystopia'])
