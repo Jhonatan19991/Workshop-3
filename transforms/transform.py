@@ -8,7 +8,7 @@ sys.path.append(work_dir)
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsRegressor
 
 
 
@@ -99,23 +99,22 @@ def prepare_data():
     df['Region'] = df['Region'].fillna(df['Country'].map(region_mapping))
 
     normalization_regions = {
-    'Western Europe': 'Europe',
-    'North America': 'America',
-    'Australia and New Zealand': 'Oceania',
-    'Middle East and Northern Africa': 'Africa',
-    'Latin America and Caribbean': 'America',
-    'Southeastern Asia': 'Asia',
-    'Central and Eastern Europe': 'Europe',
-    'Eastern Asia': 'Asia',
-    'Sub-Saharan Africa': 'Africa',
-    'Southern Asia': 'Asia',
-    'Eastern Europe': 'Europe'
+        'Western Europe': 'West_Europe',
+        'North America': 'America',
+        'Australia and New Zealand': 'Oceania',
+        'Middle East and Northern Africa': 'North_Africa',
+        'Latin America and Caribbean': 'America',
+        'Southeastern Asia': 'Asia',
+        'Central and Eastern Europe': 'East_Europe',
+        'Eastern Asia': 'Asia',
+        'Sub-Saharan Africa': 'South_Africa',
+        'Southern Asia': 'Asia',
+        'Eastern Europe': 'East_Europe'
     }
+
 
     # Normalize the regions using the mapping
     df['Region'] = df['Region'].map(normalization_regions)
-
-    df['Trust (Government Corruption)'] = df['Trust (Government Corruption)'].fillna(method='ffill')
 
     df.rename(columns={
         'Happiness Score': 'Score',
@@ -140,16 +139,22 @@ def prepare_data():
         'Trust', 
         'Generosity', 
         'year', 
-        'Region_America', 
         'Region_Asia', 
-        'Region_Europe', 
-        'Region_Oceania'
+        'Region_East_Europe', 
+        'Region_North_Africa', 
+        'Region_Oceania',
+        'Region_South_Africa',
+        'Region_West_Europe'
     ]
 
     X_train = complete_data[predictors]
     y_train = complete_data['Dystopia']
 
-    model = LinearRegression()
+    model = KNeighborsRegressor(
+        n_neighbors=4,  
+        leaf_size=12,
+        weights='distance'                 
+    )
     model.fit(X_train, y_train)
 
     X_missing = incomplete_data[predictors]
@@ -163,7 +168,7 @@ def prepare_data():
     X = df.drop(['Score'], axis=1)
     y = df['Score']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2)
 
     return X_test, y_test
 
