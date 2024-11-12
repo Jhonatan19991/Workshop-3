@@ -20,7 +20,7 @@ if __name__ == "__main__":
         dict_row = dict(row)
         to_json = json.dumps(dict_row)
         producer.send("workshop3", value=to_json)
-        time.sleep(1)
+        time.sleep(0.9)
         print("message sent")
     
     producer.close()
